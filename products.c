@@ -3,8 +3,8 @@
  * the assignment.  Make sure to add your name and @oregonstate.edu email
  * address below:
  *
- * Name:
- * Email:
+ * Name: Anthony Pham
+ * Email: phamanth@oregonstate.edu
  */
 
 #include <stdio.h>
