@@ -8,7 +8,8 @@
  */
 
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
 #include "products.h"
 #include "dynarray.h"
 
