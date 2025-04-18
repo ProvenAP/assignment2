@@ -28,7 +28,23 @@
  *   initialized with the values provided.
  */
 struct product* create_product(char* name, int inventory, float price) {
-  return NULL;
+    struct product* product_ptr = malloc(sizeof(struct product));
+    if (product_ptr == NULL) {
+        fprintf(stderr, "Error, Can't allocate any memory for the product.\n");
+        return NULL;
+    }
+
+    product_ptr->name = malloc(strlen(name) + 1);
+    if (product_ptr->name == NULL) {
+        fprintf(stderr, "Error, Can't allocate any memory for the product name.\n");
+        free(product_ptr);
+        return NULL;
+    }
+    strcpy(product_ptr->name, name);
+
+    product_ptr->inventory = inventory;
+    product_ptr->price = price;
+    return product_ptr;
 }
 
 
