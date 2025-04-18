@@ -28,6 +28,7 @@
  *   Should return a newly-allocated product structure whose fields are
  *   initialized with the values provided.
  */
+
 struct product* create_product(char* name, int inventory, float price) {
     struct product* product_ptr = malloc(sizeof(struct product));
     if (product_ptr == NULL) {
@@ -47,7 +48,6 @@ struct product* create_product(char* name, int inventory, float price) {
     product_ptr->price = price;
     return product_ptr;
 }
-
 
 /*
  * This function should free all memory allocated by create_product() for a
@@ -96,16 +96,17 @@ void free_product(struct product* product_ptr) {
  *   the i'th name, the i'th inventory, and the i'th price from the arrays provided as
  *   arguments.
  */
+
 struct dynarray* create_product_array(int num_products, char** names, int* inventories, float* prices) {
     struct dynarray* products_arr = dynarray_create();
     if (products_arr == NULL) {
-        fprintf(stderr, "Error: Could not create dynamic array for products.\n");
+        fprintf(stderr, "Error, can't create a dynamic array for the products.\n");
         return NULL;
     }
     for (int index = 0; index < num_products; index++) {
         struct product* product_ptr = create_product(names[index], inventories[index], prices[index]);
         if (product_ptr == NULL) {
-            fprintf(stderr, "Warning: Product %d could not be created.\n", index);
+            fprintf(stderr, "The product %d could not be created.\n", index);
             continue;
         }
         
@@ -113,8 +114,6 @@ struct dynarray* create_product_array(int num_products, char** names, int* inven
     }
     return products_arr;
 }
-
-
 
 /*
  * This function should free all of the memory allocated to a dynamic array of
@@ -131,9 +130,15 @@ struct dynarray* create_product_array(int num_products, char** names, int* inven
  *     is to be freed
  */
 void free_product_array(struct dynarray* products) {
-
+    if (products != NULL) {
+        int length = dynarray_length(products);
+        for (int index = 0; index < length; index++) {
+            struct product* product_ptr = dynarray_get(products, index);
+            free_product(product_ptr);
+        }
+        dynarray_free(products);
+    }
 }
-
 
 /*
  * This function should print the name, inventory, and price of products in an
@@ -144,9 +149,15 @@ void free_product_array(struct dynarray* products) {
  *   products - the dynamic array of products to be printed
  */
 void print_products(struct dynarray* products) {
-
+    int length = dynarray_length(products);
+    for (int index = 0; index < length; index++) {
+        struct product* product_ptr = dynarray_get(products, index);
+        printf("Product: %s, Inventory: %d, Price: %.2f\n",
+               product_ptr->name,
+               product_ptr->inventory,
+               product_ptr->price);
+    }
 }
-
 
 /*
  * This function should return a pointer to the product in a given array with
@@ -165,10 +176,20 @@ void print_products(struct dynarray* products) {
  *   instead return the pointer to the product struct that's already stored in
  *   the array.
  */
-struct product* find_max_price(struct dynarray* products) {
-  return NULL;
-}
 
+struct product* find_max_price(struct dynarray* products) {
+    int length = dynarray_length(products);
+    if (length == 0)
+        return NULL;
+    struct product* max_product_ptr = dynarray_get(products, 0);
+    for (int index = 1; index < length; index++) {
+        struct product* current_ptr = dynarray_get(products, index);
+        if (current_ptr->price > max_product_ptr->price) {
+            max_product_ptr = current_ptr;
+        }
+    }
+    return max_product_ptr;
+}
 
 /*
  * This function should return a pointer to the product in a given array with
@@ -191,10 +212,23 @@ struct product* find_max_price(struct dynarray* products) {
  *   instead return the pointer to the product struct that's already stored in
  *   the array.
  */
-struct product* find_max_investment(struct dynarray* products) {
-  return NULL;
-}
 
+struct product* find_max_investment(struct dynarray* products) {
+    int length = dynarray_length(products);
+    if (length == 0)
+        return NULL;
+    struct product* max_investment_ptr = dynarray_get(products, 0);
+    float max_investment_value = max_investment_ptr->price * max_investment_ptr->inventory;
+    for (int index = 1; index < length; index++) {
+        struct product* current_ptr = dynarray_get(products, index);
+        float current_investment_value = current_ptr->price * current_ptr->inventory;
+        if (current_investment_value > max_investment_value) {
+            max_investment_value = current_investment_value;
+            max_investment_ptr = current_ptr;
+        }
+    }
+    return max_investment_ptr;
+}
 
 /*
  * This function should sort the products stored in a dynamic array by
@@ -216,5 +250,22 @@ struct product* find_max_investment(struct dynarray* products) {
  *   highest).
  */
 void sort_by_inventory(struct dynarray* products) {
-
+    int length = dynarray_length(products);
+    for (int i =0; i < length - 1; i++) {
+        int min_index = i;
+        struct product* min_product_ptr = dynarray_get(products, i);
+        for (int j = i + 1; j < length; j++) {
+            struct product* current_ptr = dynarray_get(products, j);
+            if (current_ptr->inventory < min_product_ptr->inventory) {
+                min_index = j;
+                min_product_ptr = current_ptr;
+            }
+        }
+        if (min_index != i) {
+            struct product* temp_ptr = dynarray_get(products, i);
+            dynarray_set(products, i, min_product_ptr);
+            dynarray_set(products, min_index, temp_ptr);
+        }
+    }
 }
+
