@@ -59,10 +59,12 @@ struct product* create_product(char* name, int inventory, float price) {
  *     function must free any memory allocated to the fields of this struct
  *     as well as memory allocated for the struct itself.
  */
-void free_product(struct product* product) {
-
+void free_product(struct product* product_ptr) {
+    if (product_ptr != NULL) {
+        free(product_ptr->name);
+        free(product_ptr);
+    }
 }
-
 
 /*
  * This function should create a struct product for each product represented
