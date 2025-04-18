@@ -96,9 +96,24 @@ void free_product(struct product* product_ptr) {
  *   the i'th name, the i'th inventory, and the i'th price from the arrays provided as
  *   arguments.
  */
-struct dynarray* create_product_array(int num_products, char** names, int* inventory, float* prices) {
-  return NULL;
+struct dynarray* create_product_array(int num_products, char** names, int* inventories, float* prices) {
+    struct dynarray* products_arr = dynarray_create();
+    if (products_arr == NULL) {
+        fprintf(stderr, "Error: Could not create dynamic array for products.\n");
+        return NULL;
+    }
+    for (int index = 0; index < num_products; index++) {
+        struct product* product_ptr = create_product(names[index], inventories[index], prices[index]);
+        if (product_ptr == NULL) {
+            fprintf(stderr, "Warning: Product %d could not be created.\n", index);
+            continue;
+        }
+        
+        dynarray_insert(products_arr, -1, product_ptr);
+    }
+    return products_arr;
 }
+
 
 
 /*
